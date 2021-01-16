@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    suite: pachyderm
+  name: pachyderm-worker
+  namespace: pachyderm
+secrets:
+- name: pachyderm-worker-token-7lmrq

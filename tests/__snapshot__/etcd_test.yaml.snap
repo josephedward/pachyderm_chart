@@ -1,0 +1,67 @@
+manifest should match snapshot:
+  1: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: pach_chart
+        app.kubernetes.io/version: 0.5.48
+        helm.sh/chart: pach_chart-0.1.0
+      name: RELEASE-NAME-pach_chart
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app.kubernetes.io/instance: RELEASE-NAME
+          app.kubernetes.io/name: pach_chart
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/instance: RELEASE-NAME
+            app.kubernetes.io/name: pach_chart
+        spec:
+          containers:
+          - command:
+            - /usr/local/bin/etcd
+            - --listen-client-urls=http://0.0.0.0:2379
+            - --advertise-client-urls=http://0.0.0.0:2379
+            - --data-dir=/var/data/etcd
+            - --auto-compaction-retention=1
+            - --max-txn-ops=10000
+            - --max-request-bytes=52428800
+            - --quota-backend-bytes=8589934592
+            image: pachyderm/etcd:v3.3.5
+            imagePullPolicy: IfNotPresent
+            name: etcd
+            ports:
+            - containerPort: 2379
+              name: client-port
+              protocol: TCP
+            - containerPort: 2380
+              name: peer-port
+              protocol: TCP
+            resources:
+              limits:
+                cpu: 250m
+                memory: 512M
+              requests:
+                cpu: 250m
+                memory: 512M
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+            volumeMounts:
+            - mountPath: /var/data/etcd
+              name: etcd-storage
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          schedulerName: default-scheduler
+          terminationGracePeriodSeconds: 30
+          volumes:
+          - hostPath:
+              path: /var/pachyderm/etcd
+              type: DirectoryOrCreate
+            name: etcd-storage
+          securityContext: {}
+          serviceAccountName: RELEASE-NAME-pach_chart

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    suite: pachyderm
+  name: pachyderm
+  namespace: pachyderm
+secrets:
+- name: pachyderm-token-hpgt7

@@ -1,0 +1,61 @@
+manifest should match snapshot:
+  1: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: pach_chart
+        app.kubernetes.io/version: 0.5.48
+        helm.sh/chart: pach_chart-0.1.0
+      name: RELEASE-NAME-pach_chart
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app.kubernetes.io/instance: RELEASE-NAME
+          app.kubernetes.io/name: pach_chart
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/instance: RELEASE-NAME
+            app.kubernetes.io/name: pach_chart
+        spec:
+          containers:
+          - image: pachyderm/dash:0.5.48
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              httpGet:
+                path: /
+                port: dash-http
+            name: pach_chart-dash
+            ports:
+            - containerPort: 8080
+              name: dash-http
+              protocol: TCP
+            readinessProbe:
+              httpGet:
+                path: /
+                port: dash-http
+            resources: {}
+            securityContext: {}
+          - image: pachyderm/grpc-proxy:0.4.10
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              httpGet:
+                path: /
+                port: grpc-proxy-http
+            name: pach_chart-grpcProxy
+            ports:
+            - containerPort: 8081
+              name: grpc-proxy-http
+              protocol: TCP
+            readinessProbe:
+              httpGet:
+                path: /
+                port: grpc-proxy-http
+            resources: {}
+            securityContext: {}
+          securityContext: {}
+          serviceAccountName: RELEASE-NAME-pach_chart
