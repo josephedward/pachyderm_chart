@@ -34,17 +34,13 @@ spec:
           image: "{{ .Values.image.etcd.repository }}:{{ .Values.image.etcd.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.dash.pullPolicy }}
           ports:
-            - name: etcd-http
-              containerPort: 8080
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: etcd-http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: etcd-http
+          - containerPort: 2379
+            name: client-port
+            protocol: TCP
+          - containerPort: 2380
+            name: peer-port
+            protocol: TCP
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

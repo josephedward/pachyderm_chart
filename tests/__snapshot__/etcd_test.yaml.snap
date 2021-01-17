@@ -25,19 +25,14 @@ manifest should match snapshot:
           containers:
           - image: pachyderm/etcd:v3.3.5
             imagePullPolicy: IfNotPresent
-            livenessProbe:
-              httpGet:
-                path: /
-                port: etcd-http
             name: pach_chart-etcd
             ports:
-            - containerPort: 8080
-              name: etcd-http
+            - containerPort: 2379
+              name: client-port
               protocol: TCP
-            readinessProbe:
-              httpGet:
-                path: /
-                port: etcd-http
+            - containerPort: 2380
+              name: peer-port
+              protocol: TCP
             resources: {}
             securityContext: {}
           securityContext: {}
