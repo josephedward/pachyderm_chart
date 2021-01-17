@@ -23,38 +23,21 @@ manifest should match snapshot:
             app.kubernetes.io/name: pach_chart
         spec:
           containers:
-          - image: pachyderm/dash:0.5.48
+          - image: pachyderm/etcd:v3.3.5
             imagePullPolicy: IfNotPresent
             livenessProbe:
               httpGet:
                 path: /
-                port: dash-http
-            name: pach_chart-dash
+                port: etcd-http
+            name: pach_chart-etcd
             ports:
             - containerPort: 8080
-              name: dash-http
+              name: etcd-http
               protocol: TCP
             readinessProbe:
               httpGet:
                 path: /
-                port: dash-http
-            resources: {}
-            securityContext: {}
-          - image: pachyderm/grpc-proxy:0.4.10
-            imagePullPolicy: IfNotPresent
-            livenessProbe:
-              httpGet:
-                path: /
-                port: grpc-proxy-http
-            name: pach_chart-grpcProxy
-            ports:
-            - containerPort: 8081
-              name: grpc-proxy-http
-              protocol: TCP
-            readinessProbe:
-              httpGet:
-                path: /
-                port: grpc-proxy-http
+                port: etcd-http
             resources: {}
             securityContext: {}
           securityContext: {}

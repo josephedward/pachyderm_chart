@@ -28,41 +28,23 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}-dash
+        - name: {{ .Chart.Name }}-etcd
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.dash.repository }}:{{ .Values.image.dash.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.etcd.repository }}:{{ .Values.image.etcd.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.dash.pullPolicy }}
           ports:
-            - name: dash-http
+            - name: etcd-http
               containerPort: 8080
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /
-              port: dash-http
+              port: etcd-http
           readinessProbe:
             httpGet:
               path: /
-              port: dash-http
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.grpcProxy.repository }}:{{ .Values.image.grpcProxy.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.grpcProxy.pullPolicy }}
-          ports:
-            - name: grpc-proxy-http
-              containerPort: 8081
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: grpc-proxy-http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: grpc-proxy-http
+              port: etcd-http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
