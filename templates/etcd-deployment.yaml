@@ -47,7 +47,6 @@ spec:
               port: dash-http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-        - name: {{ .Chart.Name }}-grpcProxy
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.grpcProxy.repository }}:{{ .Values.image.grpcProxy.tag | default .Chart.AppVersion }}"

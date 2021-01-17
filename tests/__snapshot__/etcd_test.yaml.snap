@@ -23,45 +23,39 @@ manifest should match snapshot:
             app.kubernetes.io/name: pach_chart
         spec:
           containers:
-          - command:
-            - /usr/local/bin/etcd
-            - --listen-client-urls=http://0.0.0.0:2379
-            - --advertise-client-urls=http://0.0.0.0:2379
-            - --data-dir=/var/data/etcd
-            - --auto-compaction-retention=1
-            - --max-txn-ops=10000
-            - --max-request-bytes=52428800
-            - --quota-backend-bytes=8589934592
-            image: pachyderm/etcd:v3.3.5
+          - image: pachyderm/dash:0.5.48
             imagePullPolicy: IfNotPresent
-            name: etcd
+            livenessProbe:
+              httpGet:
+                path: /
+                port: dash-http
+            name: pach_chart-dash
             ports:
-            - containerPort: 2379
-              name: client-port
+            - containerPort: 8080
+              name: dash-http
               protocol: TCP
-            - containerPort: 2380
-              name: peer-port
+            readinessProbe:
+              httpGet:
+                path: /
+                port: dash-http
+            resources: {}
+            securityContext: {}
+          - image: pachyderm/grpc-proxy:0.4.10
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              httpGet:
+                path: /
+                port: grpc-proxy-http
+            name: pach_chart-grpcProxy
+            ports:
+            - containerPort: 8081
+              name: grpc-proxy-http
               protocol: TCP
-            resources:
-              limits:
-                cpu: 250m
-                memory: 512M
-              requests:
-                cpu: 250m
-                memory: 512M
-            terminationMessagePath: /dev/termination-log
-            terminationMessagePolicy: File
-            volumeMounts:
-            - mountPath: /var/data/etcd
-              name: etcd-storage
-          dnsPolicy: ClusterFirst
-          restartPolicy: Always
-          schedulerName: default-scheduler
-          terminationGracePeriodSeconds: 30
-          volumes:
-          - hostPath:
-              path: /var/pachyderm/etcd
-              type: DirectoryOrCreate
-            name: etcd-storage
+            readinessProbe:
+              httpGet:
+                path: /
+                port: grpc-proxy-http
+            resources: {}
+            securityContext: {}
           securityContext: {}
           serviceAccountName: RELEASE-NAME-pach_chart
