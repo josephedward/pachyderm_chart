@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "pach_chart.fullname" . }}
+  labels:
+    {{- include "pach_chart.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "pach_chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "pach_chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "pach_chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-pachd
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.pachd.repository }}:{{ .Values.image.pachd.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pachd.pullPolicy }}
+          ports:
+          - containerPort: 650
+            name: api-grpc-port
+            protocol: TCP
+          - containerPort: 651
+            name: trace-port
+            protocol: TCP
+          - containerPort: 652
+            name: api-http-port
+            protocol: TCP
+          - containerPort: 653
+            name: peer-port
+            protocol: TCP
+          - containerPort: 655
+            name: api-git-port
+            protocol: TCP
+          - containerPort: 654
+            name: saml-port
+            protocol: TCP
+          - containerPort: 657
+            name: oidc-port
+            protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

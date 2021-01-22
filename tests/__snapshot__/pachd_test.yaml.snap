@@ -23,15 +23,30 @@ manifest should match snapshot:
             app.kubernetes.io/name: pach_chart
         spec:
           containers:
-            image: pachyderm/etcd:v3.3.5
+          - image: pachyderm/pachd:1.11.7
             imagePullPolicy: IfNotPresent
-            name: pach_chart-etcd
+            name: pach_chart-pachd
             ports:
-            - containerPort: 2379
-              name: client-port
+            - containerPort: 650
+              name: api-grpc-port
               protocol: TCP
-            - containerPort: 2380
+            - containerPort: 651
+              name: trace-port
+              protocol: TCP
+            - containerPort: 652
+              name: api-http-port
+              protocol: TCP
+            - containerPort: 653
               name: peer-port
+              protocol: TCP
+            - containerPort: 655
+              name: api-git-port
+              protocol: TCP
+            - containerPort: 654
+              name: saml-port
+              protocol: TCP
+            - containerPort: 657
+              name: oidc-port
               protocol: TCP
             resources: {}
             securityContext: {}

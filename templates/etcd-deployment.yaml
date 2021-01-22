@@ -28,11 +28,11 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}-etcd
+          name: {{ .Chart.Name }}-etcd
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.etcd.repository }}:{{ .Values.image.etcd.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.dash.pullPolicy }}
+          imagePullPolicy: {{ .Values.image.etcd.pullPolicy }}
           ports:
           - containerPort: 2379
             name: client-port
@@ -40,7 +40,6 @@ spec:
           - containerPort: 2380
             name: peer-port
             protocol: TCP
-
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
