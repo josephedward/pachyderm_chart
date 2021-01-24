@@ -1,7 +1,6 @@
 templates:
   - dash-deployment.yaml
-  # - etcd-deployment.yaml
-  # - pachd-deployment.yaml
+  - dash-service.yaml
 tests:
   # or you can snapshot the whole manifest
   - it: manifest should match snapshot
